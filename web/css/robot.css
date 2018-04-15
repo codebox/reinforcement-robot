@@ -1,0 +1,46 @@
+#container{
+    display: flex;
+    flex-direction: column;
+    width: 800px;
+    margin: 0 auto;
+}
+#middlerow{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+#grid{
+    display: inline-block;
+    background-color: black;
+    border: 2px solid black;
+}
+#gridHolder {
+    flex-grow: 1;
+}
+.gridRow{
+    display: flex;
+    flex-direction: row;
+}
+.gridCell{
+    height: 3em;
+    width: 3em;
+}
+.gridCell:hover{
+    background-color: beige;
+    cursor: pointer;
+}
+#boxpicker{
+    flex-basis: 10em;
+}
+header, section {
+    padding: 1em;
+}
+div.gridCell {
+    border: 1px solid black;
+    border-radius: 3px;
+    margin: 0px;
+    background-color: white;
+}
+header, section {
+    border: 1px solid black;
+}
