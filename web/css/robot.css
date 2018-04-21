@@ -22,24 +22,31 @@
     flex-direction: row;
 }
 .gridCell{
-    height: 3em;
-    width: 3em;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    border-radius: 3px;
+    margin: 0px;
+    background-color: white;
+    font-family: sans-serif;
 }
 .gridCell:hover{
     background-color: beige;
     cursor: pointer;
+}
+.gridCell.selected {
+    color: white;
+    background-color: #75a8d3;
+    font-weight: bold;
 }
 #boxpicker{
     flex-basis: 10em;
 }
 header, section {
     padding: 1em;
-}
-div.gridCell {
-    border: 1px solid black;
-    border-radius: 3px;
-    margin: 0px;
-    background-color: white;
 }
 header, section {
     border: 1px solid black;
