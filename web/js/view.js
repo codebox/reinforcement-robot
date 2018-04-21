@@ -5,7 +5,8 @@ function buildView($container) {
     }
 
     const $setBoxValue = $('#setBoxValue'),
-        $boxValue = $('#boxValue');
+        $boxValue = $('#boxValue'),
+        $deselectAll = $('#deselectAll');
 
     const view = {
         render(model) {
@@ -34,10 +35,23 @@ function buildView($container) {
             $container.find('.gridCell').click(e => {
                 $(e.target).toggleClass('selected');
             });
+
+            $container.find('.gridCell').on('mouseover mousedown', event => {
+                "use strict";
+                if (event.buttons){
+                    $(event.target).addClass('selected');
+                }
+            });
         },
         updateCell(x,y,v) {
             "use strict";
-            $(`#${makeCellId(x,y)}`).text(v);
+            const $cell = $(`#${makeCellId(x,y)}`);
+            $cell.text(v);
+            $cell.css('backgroundColor', `rgb(${v < 0 ? 255 : 0},${v > 0 ? 255 : 0},0,1 - ${Math.min(Math.abs(v), 10) / 10})`);
+        },
+        deselectAll(){
+            "use strict";
+            $container.find('.gridCell.selected').removeClass('selected')
         }
     };
 
@@ -52,6 +66,9 @@ function buildView($container) {
             $(view).trigger('update', [x, y, newValue]);
         });
     });
+
+    $deselectAll.on('click', view.deselectAll);
+
     return view;
 
 }

@@ -11,7 +11,7 @@
 }
 #grid{
     display: inline-block;
-    background-color: black;
+    background-color: white;
     border: 2px solid black;
 }
 #gridHolder {
@@ -33,6 +33,9 @@
     background-color: white;
     font-family: sans-serif;
 }
+::selection {
+    background: transparent;
+}
 .gridCell:hover{
     background-color: beige;
     cursor: pointer;
@@ -40,7 +43,6 @@
 .gridCell.selected {
     color: white;
     background-color: #75a8d3;
-    font-weight: bold;
 }
 #boxpicker{
     flex-basis: 10em;
