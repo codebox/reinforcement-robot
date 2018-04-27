@@ -3,7 +3,8 @@ $(() => {
 
     const $grid = $('#grid'),
         model = buildModel(10,10),
-        view = buildView($grid);
+        view = buildView($grid),
+        strategy = buildStrategy(model);
 
     view.render(model);
 
@@ -27,16 +28,39 @@ $(() => {
         model.forEach(item => item.selected = false);
     })
 
-    $(view).on('reset', () => model.forEach(item => {
-        item.value = 0;
-        item.selected = false;
-    }));
+    $(view).on('reset', () => {
+        model.forEach(item => {
+            item.value = 0;
+            item.selected = false;
+        });
+        model.setRobotLocation(0,0);
+    });
 
     $(view).on('moveRobotBy', (_, dx, dy) => {
         const robotLocation = model.getRobotLocation();
         model.setRobotLocation(robotLocation.x + dx, robotLocation.y + dy);
     });
 
-    model.forEach(item => item.value = 0);
-    model.setRobotLocation(1,1);
+    //model.forEach(item => item.value = 0);
+    model.forEach(item => item.value = Math.floor(Math.random() * 200 - 100));
+    model.setRobotLocation(0,0);
+
+    const INTERVAL_MILLIS = 1000;
+    let timer;
+
+    $(view).on('start', () => {
+        if (timer === undefined) {
+            timer = setInterval(() => {
+                const nextLocation = strategy.next(model.getRobotLocation());
+                model.setRobotLocation(nextLocation.x, nextLocation.y);
+            }, INTERVAL_MILLIS);
+        }
+    });
+
+    $(view).on('stop', () => {
+        if (timer !== undefined) {
+            clearInterval(timer);
+            timer = undefined;
+        }
+    });
 });

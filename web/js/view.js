@@ -16,7 +16,13 @@ function buildView($container) {
         $boxValue = $('#boxValue'),
         $deselectAll = $('#deselectAll'),
         $resetAll = $('#resetAll'),
-        $setBlock = $('#setBlock');
+        $setBlock = $('#setBlock'),
+        $startStop = $('#startStop');
+
+    const STATE_RUNNING = Symbol(),
+        STATE_STOPPED = Symbol();
+
+    let state = STATE_STOPPED;
 
     const view = {
         render(model) {
@@ -54,7 +60,7 @@ function buildView($container) {
             const $cell = $(`#${makeCellId(x,y)}`);
 
             if (r) {
-                $cell.text('R');
+                $cell.text('');
             } else if (b) {
                 $cell.text('');
             } else {
@@ -63,6 +69,7 @@ function buildView($container) {
 
             $cell.toggleClass('selected', s);
             $cell.toggleClass('block', b);
+            $cell.toggleClass('robot', r);
 
             if (s || b) {
                 $cell.css('backgroundColor','');
@@ -99,6 +106,18 @@ function buildView($container) {
 
     $resetAll.on('click', () => {        
         $(view).trigger('reset');
+    });
+
+    $startStop.on('click', () => {
+        if (state === STATE_STOPPED) {
+            $startStop.text('Stop');
+            state = STATE_RUNNING;
+            $(view).trigger('start');
+        } else if (state === STATE_RUNNING) {
+            $startStop.text('Start');
+            state = STATE_STOPPED;
+            $(view).trigger('stop');
+        }
     });
 
     $(document).on('keydown', e => {

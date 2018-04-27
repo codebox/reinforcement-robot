@@ -34,7 +34,7 @@ function buildModel(width, height) {
                 }
             },
             get robot() {
-                return hasRobot;
+                return !! hasRobot;
             },
 
             get block() {
@@ -52,9 +52,28 @@ function buildModel(width, height) {
         }
     }
 
+    function addIfValid(arr, x, y) {
+        forItem(x, y, item => {
+            if (!item.block) {
+                arr.push(item);
+            }
+        });
+    }
+
     const model = {
         get(x, y) {
             return data[x][y];
+        },
+
+        getNeighbours(x, y) {
+            const neighbours = [];
+
+            addIfValid(neighbours, x-1, y);
+            addIfValid(neighbours, x+1, y);
+            addIfValid(neighbours, x, y-1);
+            addIfValid(neighbours, x, y+1);
+
+            return neighbours;
         },
 
         getRobotLocation() {

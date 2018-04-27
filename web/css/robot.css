@@ -44,6 +44,12 @@
     color: white;
     background-color: #75a8d3 ! important;
 }
+.gridCell.robot {
+    background-image: url(../images/robot.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 30px 30px;
+}
 .gridCell.block {
     background-color: grey;
     color: grey;
