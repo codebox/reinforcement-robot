@@ -63,6 +63,9 @@ function buildModel(width, height) {
 
         setRobotLocation(x, y) {
             forItem(x, y, item => {
+                if (item.block) {
+                    return;
+                }
                 if (robotLocation) {
                     robotLocation.robot = false;
                 }
