@@ -44,6 +44,11 @@
     color: white;
     background-color: #75a8d3 ! important;
 }
+.gridCell.block {
+    background-color: grey;
+    color: grey;
+    opacity: 1;
+}
 #boxpicker{
     flex-basis: 10em;
 }

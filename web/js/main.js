@@ -8,11 +8,15 @@ $(() => {
     view.render(model);
 
     $(model).on('change', (_, item) => {
-        view.updateCell(item.x, item.y, item.value, item.selected, item.robot);
+        view.updateCell(item.x, item.y, item.value, item.selected, item.robot, item.block);
     });
 
     $(view).on('updateValue', (_, x, y, v) => {
         model.setValue(x, y, v);
+    })
+
+    $(view).on('setBlock', (_, x, y, v) => {
+        model.setBlock(x, y);
     })
 
     $(view).on('updateSelected', (_, x, y, s) => {

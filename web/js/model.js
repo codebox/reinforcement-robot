@@ -1,7 +1,7 @@
 function buildModel(width, height) {
     "use strict";
 
-    const data = {};
+    const data = {}, BLOCK = undefined;
     let robotLocation;
 
     function buildItem(x, y) {
@@ -35,6 +35,10 @@ function buildModel(width, height) {
             },
             get robot() {
                 return hasRobot;
+            },
+
+            get block() {
+                return itemValue === BLOCK;
             }
         };
     }
@@ -69,6 +73,10 @@ function buildModel(width, height) {
 
         setValue(x, y, newValue) {
             forItem(x, y, item => item.value = newValue);
+        },
+
+        setBlock(x, y) {
+            forItem(x, y, item => item.value = BLOCK);
         },
 
         setSelected(x, y, isSelected = true) {

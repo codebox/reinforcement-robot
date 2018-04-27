@@ -15,7 +15,8 @@ function buildView($container) {
     const $setBoxValue = $('#setBoxValue'),
         $boxValue = $('#boxValue'),
         $deselectAll = $('#deselectAll'),
-        $resetAll = $('#resetAll');
+        $resetAll = $('#resetAll'),
+        $setBlock = $('#setBlock');
 
     const view = {
         render(model) {
@@ -49,18 +50,23 @@ function buildView($container) {
                 $(view).trigger('updateSelected', [getX(event.target), getY(event.target), true]);
             });
         },
-        updateCell(x,y,v,s,r) {
+        updateCell(x,y,v,s,r,b) {
             const $cell = $(`#${makeCellId(x,y)}`);
 
             if (r) {
                 $cell.text('R');
+            } else if (b) {
+                $cell.text('');
             } else {
                 $cell.text(v);    
             }
 
             $cell.toggleClass('selected', s);
+            $cell.toggleClass('block', b);
 
-            if (!s) {
+            if (s || b) {
+                $cell.css('backgroundColor','');
+            } else {
                 const VAL_CUTOFF = 100;
                 let r = v < 0 ? 255 : 0, 
                     g = v > 0 ? 255 : 0, 
@@ -79,6 +85,14 @@ function buildView($container) {
         });
 
         $(view).trigger('deselectAll');        
+    });
+
+    $setBlock.on('click', () => {
+        $container.find('.gridCell.selected').each((_, el) => {
+            $(view).trigger('setBlock', [getX(el), getY(el)]);
+        });
+
+        $(view).trigger('deselectAll');
     });
 
     $deselectAll.on('click', () => $(view).trigger('deselectAll'));
