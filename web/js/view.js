@@ -1,17 +1,24 @@
+"use strict";
 function buildView($container) {
     function makeCellId(x,y) {
-        "use strict";
         return `cell_${x}_${y}`;
+    }
+
+    function getX(el) {
+        return Number($(el).attr('data-x'));
+    }
+
+    function getY(el) {
+        return Number($(el).attr('data-y'));
     }
 
     const $setBoxValue = $('#setBoxValue'),
         $boxValue = $('#boxValue'),
-        $deselectAll = $('#deselectAll');
+        $deselectAll = $('#deselectAll'),
+        $resetAll = $('#resetAll');
 
     const view = {
         render(model) {
-            "use strict";
-
             function buildGrid(rowCount, columnCount) {
                 function buildGridCell(x,y) {
                     return `<div class="gridCell" id="${makeCellId(x,y)}" data-x="${x}" data-y="${y}"></div>`;
@@ -32,43 +39,67 @@ function buildView($container) {
             }
             $container.html(buildGrid(model.width, model.height));
 
-            $container.find('.gridCell').click(e => {
-                $(e.target).toggleClass('selected');
-            });
-
             $container.find('.gridCell').on('mouseover mousedown', event => {
-                "use strict";
-                if (event.buttons){
-                    $(event.target).addClass('selected');
+                if (event.buttons) {
+                    $(view).trigger('updateSelected', [getX(event.target), getY(event.target), true]);
                 }
             });
+
+            $container.find('.gridCell').on('click', event => {
+                $(view).trigger('updateSelected', [getX(event.target), getY(event.target), true]);
+            });
         },
-        updateCell(x,y,v) {
-            "use strict";
+        updateCell(x,y,v,s,r) {
             const $cell = $(`#${makeCellId(x,y)}`);
-            $cell.text(v);
-            $cell.css('backgroundColor', `rgb(${v < 0 ? 255 : 0},${v > 0 ? 255 : 0},0,1 - ${Math.min(Math.abs(v), 10) / 10})`);
-        },
-        deselectAll(){
-            "use strict";
-            $container.find('.gridCell.selected').removeClass('selected')
+
+            if (r) {
+                $cell.text('R');
+            } else {
+                $cell.text(v);    
+            }
+
+            $cell.toggleClass('selected', s);
+
+            if (!s) {
+                const VAL_CUTOFF = 100;
+                let r = v < 0 ? 255 : 0, 
+                    g = v > 0 ? 255 : 0, 
+                    a = Math.min(VAL_CUTOFF, Math.abs(v)) / VAL_CUTOFF;
+
+                $cell.css('backgroundColor', `rgba(${r}, ${g}, 0, ${a})`);
+            }
         }
     };
 
     $setBoxValue.on('click', () => {
-        "use strict";
         const newValue = Number($boxValue.val());
 
         $container.find('.gridCell.selected').each((_, el) => {
-            const $el = $(el),
-                x = Number($el.attr('data-x')),
-                y = Number($el.attr('data-y'));
-            $(view).trigger('update', [x, y, newValue]);
+            $(view).trigger('updateValue', [getX(el), getY(el), newValue]);
         });
+
+        $(view).trigger('deselectAll');        
     });
 
-    $deselectAll.on('click', view.deselectAll);
+    $deselectAll.on('click', () => $(view).trigger('deselectAll'));
+
+    $resetAll.on('click', () => {        
+        $(view).trigger('reset');
+    });
+
+    $(document).on('keydown', e => {
+        if (e.which === 38) {
+            $(view).trigger('moveRobotBy', [0, -1]);
+        } else if (e.which === 39) {
+            $(view).trigger('moveRobotBy', [1, 0]);
+        } else if (e.which === 40) {
+            $(view).trigger('moveRobotBy', [0, 1]);
+        } else if (e.which === 37) {
+            $(view).trigger('moveRobotBy', [-1, 0]);
+        } else {
+            console.log(e.which)
+        }
+    })
 
     return view;
-
 }

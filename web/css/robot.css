@@ -42,7 +42,7 @@
 }
 .gridCell.selected {
     color: white;
-    background-color: #75a8d3;
+    background-color: #75a8d3 ! important;
 }
 #boxpicker{
     flex-basis: 10em;

@@ -7,28 +7,32 @@ $(() => {
 
     view.render(model);
 
-    $(model).on('change', (_, x, y, v) => {
-        view.updateCell(x,y,v);
+    $(model).on('change', (_, item) => {
+        view.updateCell(item.x, item.y, item.value, item.selected, item.robot);
     });
-    model.init(0);
 
-    $(view).on('update', (_, x, y, v) => {
-        model.set(x, y, v);
+    $(view).on('updateValue', (_, x, y, v) => {
+        model.setValue(x, y, v);
     })
 
-    // let mouseDown = false;
-    //
-    // $('#grid').on('mouseup', () => {
-    //     mouseDown = false;
-    // });
-    // $('#grid').on('mousedown', () => {
-    //     mouseDown = true;
-    // });
+    $(view).on('updateSelected', (_, x, y, s) => {
+        model.setSelected(x, y, s);
+    })
 
-    // $grid.find('.gridCell').on('mousemove', e => {
-    //     if (mouseDown) {
-    //         console.log(this)
-    //         $(e.target).addClass('selected');
-    //     }
-    // });
+    $(view).on('deselectAll', () => {
+        model.forEach(item => item.selected = false);
+    })
+
+    $(view).on('reset', () => model.forEach(item => {
+        item.value = 0;
+        item.selected = false;
+    }));
+
+    $(view).on('moveRobotBy', (_, dx, dy) => {
+        const robotLocation = model.getRobotLocation();
+        model.setRobotLocation(robotLocation.x + dx, robotLocation.y + dy);
+    });
+
+    model.forEach(item => item.value = 0);
+    model.setRobotLocation(1,1);
 });
