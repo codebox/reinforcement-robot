@@ -17,7 +17,8 @@ function buildView($container) {
         $deselectAll = $('#deselectAll'),
         $resetAll = $('#resetAll'),
         $setBlock = $('#setBlock'),
-        $startStop = $('#startStop');
+        $startStop = $('#startStop'),
+        $scoreDisplay = $('#scoreDisplay');
 
     const STATE_RUNNING = Symbol(),
         STATE_STOPPED = Symbol();
@@ -56,22 +57,25 @@ function buildView($container) {
                 $(view).trigger('updateSelected', [getX(event.target), getY(event.target), true]);
             });
         },
-        updateCell(x,y,v,s,r,b) {
-            const $cell = $(`#${makeCellId(x,y)}`);
 
-            if (r) {
+        updateCell(x,y,v,s,o) {
+            const $cell = $(`#${makeCellId(x,y)}`),
+                block = o && o.block,
+                robot = o && o.robot;
+
+            if (block) {
                 $cell.text('');
-            } else if (b) {
-                $cell.text('');
+            } else if (robot) {
+                $cell.text(o.id);
             } else {
                 $cell.text(v);    
             }
 
             $cell.toggleClass('selected', s);
-            $cell.toggleClass('block', b);
-            $cell.toggleClass('robot', r);
+            $cell.toggleClass('block', !!block);
+            $cell.toggleClass('robot', !!robot);
 
-            if (s || b) {
+            if (s || block) {
                 $cell.css('backgroundColor','');
             } else {
                 const VAL_CUTOFF = 100;
@@ -81,6 +85,14 @@ function buildView($container) {
 
                 $cell.css('backgroundColor', `rgba(${r}, ${g}, 0, ${a})`);
             }
+        },
+
+        updateScores(robots) {
+            const parts = [];
+            robots.forEach(r => {
+                parts.push(`Robot ${r.id}: ${r.moveCount ? Math.round(r.score/r.moveCount) : '-'}`);
+            });
+            $scoreDisplay.html(parts.join('<br>'));
         }
     };
 

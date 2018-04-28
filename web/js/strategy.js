@@ -28,7 +28,7 @@ function buildStrategy(model) {
                 candidates = lookup[bestValue];
             }
 
-            return candidates[Math.floor(Math.random() * candidates.length)];
+            return candidates ? candidates[Math.floor(Math.random() * candidates.length)] : [location];
         }
     };
 }

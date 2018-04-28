@@ -49,6 +49,8 @@
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 30px 30px;
+    color: white;
+    font-size: 10px;
 }
 .gridCell.block {
     background-color: grey;

@@ -1,63 +1,65 @@
 function buildModel(width, height) {
     "use strict";
 
-    const data = {}, BLOCK = undefined;
-    let robotLocation;
+    const data = {};
 
-    function buildItem(x, y) {
-        let itemValue, itemSelected, hasRobot;
+    function buildLocation(x, y) {
+        let locationValue, locationSelected, locationOccupant;
 
         return {
             x, y,
             set value(v) {
-                if (v !== itemValue) {
-                    itemValue = v;
+                if (v !== locationValue) {
+                    locationValue = v;
                     $(model).trigger('change', this);
                 }
             },
             get value() {
-                return itemValue;
+                return locationValue;
             },
+
             set selected(s) {
-                if (s !== itemSelected) {
-                    itemSelected = s;    
+                if (s !== locationSelected) {
+                    locationSelected = s;
                     $(model).trigger('change', this);
                 }                
             },
             get selected() {
-                return !! itemSelected;
+                return !! locationSelected;
             },
-            set robot(r) {
-                if (r !== hasRobot) {
-                    hasRobot = r;
+
+            set occupant(o) {
+                if (o !== locationOccupant) {
+                    locationOccupant = o;
                     $(model).trigger('change', this);
                 }
             },
-            get robot() {
-                return !! hasRobot;
-            },
-
-            get block() {
-                return itemValue === BLOCK;
+            get occupant() {
+                return locationOccupant;
             }
+
         };
     }
 
-    function forItem(x, y, fn) {
-        const item = data[x] && data[x][y];
-        if (item) {
-            fn(item);
+    function forLocation(x, y, fn) {
+        const location = data[x] && data[x][y];
+        if (location) {
+            fn(location);
         } else {
             console.warn(`Invalid model operation requested at ${x}/${y}`)
         }
     }
 
     function addIfValid(arr, x, y) {
-        forItem(x, y, item => {
-            if (!item.block) {
-                arr.push(item);
+        forLocation(x, y, location => {
+            if (!location.occupant) {
+                arr.push(location);
             }
         });
+    }
+
+    function buildBlock() {
+        return {block:true};
     }
 
     const model = {
@@ -76,39 +78,35 @@ function buildModel(width, height) {
             return neighbours;
         },
 
-        getRobotLocation() {
-            return robotLocation;
-        },
-
-        setRobotLocation(x, y) {
-            forItem(x, y, item => {
-                if (item.block) {
-                    return;
+        setOccupant(x, y, occupant) {
+            forLocation(x, y, location => {
+                if (occupant && occupant.location !== location) {
+                    const oldLocation = occupant.location;
+                    if (oldLocation) {
+                        model.setOccupant(oldLocation.x, oldLocation.y);
+                    }
+                    occupant.location = location;
                 }
-                if (robotLocation) {
-                    robotLocation.robot = false;
-                }
-                robotLocation = item;
-                robotLocation.robot = true;
+                location.occupant = occupant;
             });
         },
 
         setValue(x, y, newValue) {
-            forItem(x, y, item => item.value = newValue);
+            forLocation(x, y, location => location.value = newValue);
         },
 
         setBlock(x, y) {
-            forItem(x, y, item => item.value = BLOCK);
+            model.setOccupant(x, y, buildBlock());
         },
 
         setSelected(x, y, isSelected = true) {
-            forItem(x, y, item => item.selected = isSelected);
+            forLocation(x, y, location => location.selected = isSelected);
         },
 
         forEach(fn) {
             for (let x = 0; x < width; x++) {
                 for (let y = 0; y < height; y++) {
-                    forItem(x, y, fn);
+                    forLocation(x, y, fn);
                 }
             }            
         },
@@ -119,7 +117,7 @@ function buildModel(width, height) {
     for (let x = 0; x < width; x++) {
         data[x] = [];
         for (let y = 0; y < height; y++) {
-            data[x][y] = buildItem(x, y);
+            data[x][y] = buildLocation(x, y);
         }
     }
 
