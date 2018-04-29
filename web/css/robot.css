@@ -66,3 +66,20 @@ header, section {
 header, section {
     border: 1px solid black;
 }
+#sidebar {
+    padding: 1em;
+    flex-basis: 100px;
+}
+#sidebar section {
+    border: none;
+    padding: 0;
+}
+#sidebar ul {
+    padding: 0;
+    list-style-type: none;
+}
+#sidebar li {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}

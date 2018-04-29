@@ -12,25 +12,31 @@
             <section id="gridHolder">
                 <div id="grid"></div>
             </section>
-            <section id="boxpicker">
-                <span id="scoreDisplay"></span>
+            <section id="sidebar">
+                <section id="scoreDisplay"></section>
+                <ul id="configs">
+                </ul>
             </section>
         </div>
         <section id="controls">
             <label for="boxValue">Box Value:</label><input type="number" id="boxValue">
             <button id="setBoxValue">Set</button>
             <button id="deselectAll">Deselect All</button>
-            <button id="resetAll">Reset All</button>
+            <button id="reset">Reset</button>
             <button id="setBlock">Block</button>
+            <button id="setRobot">Robot</button>
             <button id="startStop">Start</button>
+            <button id="save">Save</button>
+            <button id="load">Load</button>
         </section>
     </section>
 
     <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/model.js"></script>
     <script src="js/view.js"></script>
+    <script src="js/model.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/configs.js"></script>
     <script src="js/strategy.js"></script>
-    <script src="js/robot.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
