@@ -1,10 +1,9 @@
 function buildController() {
     "use strict";
 
-    let animationRequestId, nextRobotId, timer;
+    let animationRequestId, nextRobotId, running;
 
-    const configs = buildConfigs(),
-        ROBOT_INTERVAL_MILLIS = 1000;
+    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 1000;
 
     function forEachSelected(model, fn) {
         model.forEachLocation(l => {
@@ -32,9 +31,7 @@ function buildController() {
             if (animationRequestId) {
                 cancelAnimationFrame(animationRequestId);
             }
-            if (timer) {
-                clearInterval(timer);
-            }
+            running = false;
             nextRobotId = 0;
 
             function moveRobots(robotLocationsToMove, dx, dy) {
@@ -148,19 +145,36 @@ function buildController() {
             });
 
             onViewEvent('start', () => {
-                timer = setInterval(() => {
+                running = true;
+                function go() {
+                    let actions = []
+
                     forEachRobot(model, (robot, location) => {
-                        const strategy = strategies.get(robot.strategy),
-                            newLocation = strategy(location);
-                        model.forLocation(location.x, location.y, l => l.contents = undefined);
-                        model.forLocation(newLocation.x, newLocation.y, l => l.contents = robot);
+                        actions.push(() => {
+                            if (running) {
+                                const strategy = strategies.get(robot.strategy),
+                                    newLocation = strategy(location);
+                                model.forLocation(location.x, location.y, l => l.contents = undefined);
+                                model.forLocation(newLocation.x, newLocation.y, l => l.contents = robot);
+                            }
+                        });
                     });
-                }, ROBOT_INTERVAL_MILLIS);
+
+                    let i = 0;
+                    actions.forEach(action => {
+                        setTimeout(action, MOVE_INTERVAL_MILLIS * i / actions.length);
+                        i++;
+                    });
+
+                    if (running) {
+                        setTimeout(go, MOVE_INTERVAL_MILLIS);
+                    }
+                }
+                go();
             });
 
             onViewEvent('stop', () => {
-                clearInterval(timer);
-                timer = undefined;
+                running = false;
             });
 
             onViewEvent('moveRobotsBy', (_, dx, dy) => {

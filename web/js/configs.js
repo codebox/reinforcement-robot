@@ -1,6 +1,25 @@
 function buildConfigs() {
     "use strict";
 
+    function addRobot(model, x, y, id) {
+        model.forLocation(x, y, l => {
+            l.contents = {
+                robot : true,
+                id,
+                score : 0,
+                moves : 0
+            };
+        });
+    }
+
+    function addBlock(model, x, y, id) {
+        model.forLocation(x, y, l => {
+            l.contents = {
+                block : true
+            };
+        });
+    }
+
     const data = {
         'Random' : model => {
             model.forEachLocation(l => {
@@ -14,6 +33,34 @@ function buildConfigs() {
                 l.value = 0;
                 l.contents = undefined;
             });
+        },
+        'Find the Centre' : model => {
+            model.forEachLocation(l => {
+                const d = Math.floor(Math.pow((l.x - (model.width-1)/2) ** 2 + (l.y - (model.height-1)/2) ** 2, 0.5));
+                l.value = 100 - d * 30;
+                l.contents = undefined;
+            });
+            addRobot(model, 0, 0, 'A');
+            addRobot(model, 0, model.height - 1, 'B');
+            addRobot(model, model.width - 1, 0, 'C');
+            addRobot(model, model.width - 1, model.height - 1, 'D');
+
+            const x1 = 2, x2 = model.width - 3, y1 = 2, y2 = model.height - 3;
+            addBlock(model, x1, y1);
+            addBlock(model, x1, y1+2);
+            addBlock(model, x1+2, y1);
+
+            addBlock(model, x1, y2);
+            addBlock(model, x1, y2-2);
+            addBlock(model, x1+2, y2);
+
+            addBlock(model, x2, y1);
+            addBlock(model, x2-2, y1);
+            addBlock(model, x2, y1+2);
+
+            addBlock(model, x2, y2);
+            addBlock(model, x2-2, y2);
+            addBlock(model, x2, y2-2);
         }
     };
 

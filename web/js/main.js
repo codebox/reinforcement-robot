@@ -1,7 +1,7 @@
 $(() => {
     "use strict";
 
-    const model = buildModel(10, 10),
+    const model = buildModel(12, 12),
         view = buildView($('#grid')),
         controller = buildController();
 
