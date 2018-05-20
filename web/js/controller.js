@@ -83,7 +83,7 @@ function buildController() {
                 }
             }
 
-            const strategies = buildStrategies(model);
+            let strategies;
 
             view.setup(model.width, model.height);
             view.setConfigs(configs);
@@ -145,6 +145,8 @@ function buildController() {
             });
 
             onViewEvent('start', () => {
+                strategies = buildStrategies(model);
+
                 running = true;
                 function go() {
                     let actions = []

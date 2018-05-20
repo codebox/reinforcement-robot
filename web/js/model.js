@@ -11,9 +11,11 @@ function buildModel(width, height) {
             }
         },
         forLocation(x, y, fn) {
+            let result;
             if (model.data[x] && model.data[x][y]) {
-                fn(model.data[x][y]);
+                result = fn(model.data[x][y]);
             }
+            return result;
         },
         getNeighbours(x, y) {
             const neighbours = [];
