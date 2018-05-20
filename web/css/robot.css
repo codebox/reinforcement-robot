@@ -52,6 +52,12 @@
     color: white;
     font-size: 10px;
 }
+.gridCell.terminal {
+    background-image: url(../images/terminal.png);
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+    background-size: 16px 16px;
+}
 .gridCell.block {
     background-color: grey;
     color: grey;

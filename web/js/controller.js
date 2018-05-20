@@ -101,6 +101,10 @@ function buildController() {
                 forEachSelected(model, l => l.contents = {block : true});
             });
 
+            onViewEvent('setTerminals', () => {
+                forEachSelected(model, l => l.contents = {terminal : true});
+            });
+
             onViewEvent('setValues', (_, value) => {
                 forEachSelected(model, l => l.value = value);
             });

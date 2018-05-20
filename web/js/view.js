@@ -1,6 +1,7 @@
 "use strict";
 function buildView($container) {
     const $setBlockBtn = $('#setBlock'),
+        $setTerminalBtn = $('#setTerminal'),
         $setBoxValueBtn = $('#setBoxValue'),
         $boxValueInput = $('#boxValue'),
         $deselectAll = $('#deselectAll'),
@@ -66,6 +67,7 @@ function buildView($container) {
                     contents   = location.contents || {},
                     isSelected = !! location.selected,
                     hasBlock   = !! contents.block,
+                    isTerminal = !! contents.terminal,
                     hasRobot   = !! contents.robot;
 
                 if (hasBlock) {
@@ -81,6 +83,7 @@ function buildView($container) {
                 $cell.toggleClass('selected', isSelected);
                 $cell.toggleClass('block',    hasBlock);
                 $cell.toggleClass('robot',    hasRobot);
+                $cell.toggleClass('terminal', isTerminal);
 
                 if (isSelected || hasBlock) {
                     $cell.css('backgroundColor', '');
@@ -108,6 +111,10 @@ function buildView($container) {
 
     $setBlockBtn.on('click', () => {
         $(view).trigger('setBlocks');
+    });
+
+    $setTerminalBtn.on('click', () => {
+        $(view).trigger('setTerminals');
     });
 
     $setBoxValueBtn.on('click', () => {
