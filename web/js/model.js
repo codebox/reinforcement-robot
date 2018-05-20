@@ -17,13 +17,14 @@ function buildModel(width, height) {
             }
             return result;
         },
-        getNeighbours(x, y) {
-            const neighbours = [];
+        getNeighbours(x, y, walkIntoWalls) {
+            const neighbours = [],
+                location = model.forLocation(x, y, l => l);
 
             function addIfValid(arr, x, y) {
-                model.forLocation(x, y, location => {
-                    if (!location.contents) {
-                        arr.push(location);
+                model.forLocation(x, y, neighbourLocation => {
+                    if (!neighbourLocation.contents) {
+                        arr.push(neighbourLocation);
                     }
                 });
             }
@@ -32,6 +33,12 @@ function buildModel(width, height) {
             addIfValid(neighbours, x+1, y);
             addIfValid(neighbours, x, y-1);
             addIfValid(neighbours, x, y+1);
+
+            if (walkIntoWalls) {
+                for (let i = 0; i < 4 - neighbours.length; i++) {
+                    neighbours.push(location);
+                }
+            }
 
             return neighbours;
         },
@@ -42,7 +49,7 @@ function buildModel(width, height) {
         model.data[x] = [];
         for (let y = 0; y < height; y++) {
             model.data[x][y] = {
-                x, y, value : 0
+                x, y, value : 0, terminal: false
             };
         }
     }
