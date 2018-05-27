@@ -7,23 +7,32 @@ function buildPolicy(model, rounds = 1000) {
     ], MOVE_COST = 1;
 
     function makeGreedyPolicyUsingValueFunction(valueFn) {
+        function canMoveToLocation(l) {
+            return !l.contents || l.contents.terminal;
+        }
+
         return location => {
             let bestMoves = [], highestValue;
 
             MOVES.forEach(move => {
-                const moveValue = valueFn(location.x + move.dx, location.y + move.dy);
+                const newX = location.x + move.dx,
+                    newY = location.y + move.dy;
 
-                if (moveValue !== undefined) {
-                    if (bestMoves.length === 0) {
-                        bestMoves.push(move);
-                        highestValue = moveValue;
+                if (model.forLocation(newX, newY, canMoveToLocation)) {
+                    const moveValue = valueFn(newX, newY);
 
-                    } else if (moveValue === highestValue) {
-                        bestMoves.push(move);
+                    if (moveValue !== undefined) {
+                        if (bestMoves.length === 0) {
+                            bestMoves.push(move);
+                            highestValue = moveValue;
 
-                    } else if (moveValue > highestValue) {
-                        bestMoves = [move];
-                        highestValue = moveValue;
+                        } else if (moveValue === highestValue) {
+                            bestMoves.push(move);
+
+                        } else if (moveValue > highestValue) {
+                            bestMoves = [move];
+                            highestValue = moveValue;
+                        }
                     }
                 }
             });
@@ -63,7 +72,7 @@ function buildPolicy(model, rounds = 1000) {
         };
     }
 
-    function improvePolicy(policy, rounds) {
+    function improvePolicy(rounds) {
         let currentValueFn = (x,y) => model.forLocation(x, y, l => l.value),
             currentPolicy = makeGreedyPolicyUsingValueFunction(currentValueFn);
 
@@ -77,9 +86,5 @@ function buildPolicy(model, rounds = 1000) {
         return currentPolicy;
     }
 
-    function buildRandomPolicy() {
-        return location => MOVES;
-    }
-
-    return improvePolicy(buildRandomPolicy(), rounds);
+    return improvePolicy(rounds);
 }

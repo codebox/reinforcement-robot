@@ -138,32 +138,28 @@ function buildController() {
                 running = true;
 
                 const policy = buildPolicy(model, POLICY_ROUNDS);
+                let robotCount = 0, robotIndex = 0;
+
                 model.forEachRobot((robot, location) => {
                     robot.policy = policy;
+                    robotCount++;
                 });
 
                 function go() {
-                    let actions = [];
-
+                    let i = 0;
                     model.forEachRobot((robot, location) => {
-                        const action = robot.nextAction();
-                        actions.push(() => {
+                        if (robotIndex === i++) {
                             if (running) {
-                                const {position, reward} = model.action(robot, action);
+                                const {position, reward} = model.action(robot, robot.nextAction());
                                 robot.position = position;
                                 robot.score += reward;
                             }
-                        });
-                    });
-
-                    let i = 0;
-                    actions.forEach(action => {
-                        setTimeout(action, MOVE_INTERVAL_MILLIS * i / actions.length);
-                        i++;
+                        }
                     });
 
                     if (running) {
-                        setTimeout(go, MOVE_INTERVAL_MILLIS);
+                        robotIndex = (robotIndex + 1) % robotCount;
+                        setTimeout(go, MOVE_INTERVAL_MILLIS / robotCount);
                     }
                 }
                 go();

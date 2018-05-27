@@ -129,10 +129,10 @@ function buildModel(width, height) {
                     id2 = l2.contents.robot.id;
 
                 if (id1 < id2) {
-                    return 1;
+                    return -1;
 
                 } else if (id1 > id2) {
-                    return -1;
+                    return 1;
 
                 }
                 return 0;

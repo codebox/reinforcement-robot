@@ -5,7 +5,7 @@ const buildRobot = (() => {
         return {
             id : String.fromCharCode(65 + (nextId++ % 26)),
             score: 0,
-            nextAction(location){
+            nextAction(){
                 const actions = this.policy(this.position);
                 return actions[Math.floor(Math.random() * actions.length)]
             }
