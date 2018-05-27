@@ -3,7 +3,7 @@ function buildController() {
 
     let animationRequestId, nextRobotId, running;
 
-    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 1000;
+    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 1000, POLICY_ROUNDS = 100;
 
     function forEachSelected(model, fn) {
         model.forEachLocation(l => {
@@ -11,18 +11,6 @@ function buildController() {
                 l.selected = false;
                 fn(l);
             }
-        });
-    }
-
-    function forEachRobot(model, fn) {
-        const robotLocations = [];
-        model.forEachLocation(l => {
-            if (l.contents && l.contents.robot) {
-                robotLocations.push(l);
-            }
-        });
-        robotLocations.forEach(l => {
-            fn(l.contents, l);
         });
     }
 
@@ -87,6 +75,7 @@ function buildController() {
 
             view.setup(model.width, model.height);
             view.setConfigs(configs);
+
             view.refresh(model);
 
             function onViewEvent(eventName, handler) {
@@ -94,7 +83,7 @@ function buildController() {
             }
 
             onViewEvent('setSelected', (_, x, y, isSelected) => {
-                model.data[x][y].selected = isSelected;
+                model.forLocation(x, y, l => l.selected = isSelected);
             });
 
             onViewEvent('setBlocks', () => {
@@ -134,12 +123,9 @@ function buildController() {
 
             onViewEvent('robots', (_, value) => {
                 forEachSelected(model, l => {
-                    l.contents = {
-                        robot : true,
-                        id : String.fromCharCode(65 + (nextRobotId++ % 26)),
-                        score : 0,
-                        moves : 0
-                    };
+                    const robot = buildRobot();
+                    model.addRobot(robot, l.x, l.y);
+                    robot.position = {x:l.x, y:l.y};
                 });
             });
 
@@ -149,19 +135,23 @@ function buildController() {
             });
 
             onViewEvent('start', () => {
-                strategies = buildStrategies(model);
-
                 running = true;
-                function go() {
-                    let actions = []
 
-                    forEachRobot(model, (robot, location) => {
+                const policy = buildPolicy(model, POLICY_ROUNDS);
+                model.forEachRobot((robot, location) => {
+                    robot.policy = policy;
+                });
+
+                function go() {
+                    let actions = [];
+
+                    model.forEachRobot((robot, location) => {
+                        const action = robot.nextAction();
                         actions.push(() => {
                             if (running) {
-                                const strategy = strategies.get(robot.strategy),
-                                    newLocation = strategy(location);
-                                model.forLocation(location.x, location.y, l => l.contents = undefined);
-                                model.forLocation(newLocation.x, newLocation.y, l => l.contents = robot);
+                                const {position, reward} = model.action(robot, action);
+                                robot.position = position;
+                                robot.score += reward;
                             }
                         });
                     });

@@ -61,7 +61,7 @@ function buildView($container) {
                 $(view).trigger('setSelected', [getX(event.target), getY(event.target), true]);
             });
         },
-        refresh(model) {
+        refresh(model, agents) {
             model.forEachLocation(location => {
                 const $cell = $(`#${makeCellId(location.x, location.y)}`),
                     contents   = location.contents || {},
@@ -74,7 +74,7 @@ function buildView($container) {
                     $cell.text('');
 
                 } else if (hasRobot) {
-                    $cell.text(contents.id);
+                    $cell.text(contents.robot.id);
 
                 } else {
                     $cell.text(location.value);
@@ -95,6 +95,11 @@ function buildView($container) {
 
                     $cell.css('backgroundColor', `rgba(${r}, ${g}, 0, ${a})`);
                 }
+            });
+
+            $('#scoreDisplay').html('<ul></ul>');
+            model.forEachRobot(robot => {
+                $('#scoreDisplay ul').append(`<li>${robot.id}: ${robot.score} ${!!robot.finished}</li>`)
             });
         },
         setConfigs(configs) {

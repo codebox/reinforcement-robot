@@ -9,3 +9,4 @@ $(() => {
     controller.init(model, view);
 
 });
+
