@@ -116,7 +116,7 @@ function buildModel(width, height) {
             grid.forEachLocation(fn);
         },
 
-        forEachRobot(fn) {
+        forEachRobot(fn, random = false) {
             const robotLocations = [];
             grid.forEachLocation(l => {
                 if (l.contents && l.contents.robot) {
@@ -124,19 +124,26 @@ function buildModel(width, height) {
                 }
             });
 
-            robotLocations.sort((l1,l2) => {
-                const id1 = l1.contents.robot.id,
-                    id2 = l2.contents.robot.id;
-
-                if (id1 < id2) {
-                    return -1;
-
-                } else if (id1 > id2) {
-                    return 1;
-
+            if (random) {
+                for (let i = robotLocations.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [robotLocations[i], robotLocations[j]] = [robotLocations[j], robotLocations[i]];
                 }
-                return 0;
-            });
+            } else {
+                robotLocations.sort((l1, l2) => {
+                    const id1 = l1.contents.robot.id,
+                        id2 = l2.contents.robot.id;
+
+                    if (id1 < id2) {
+                        return -1;
+
+                    } else if (id1 > id2) {
+                        return 1;
+
+                    }
+                    return 0;
+                });
+            }
 
             robotLocations.forEach(l => {
                 fn(l.contents.robot, l);

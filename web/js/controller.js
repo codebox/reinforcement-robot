@@ -138,7 +138,7 @@ function buildController() {
                 running = true;
 
                 const policy = buildPolicy(model, POLICY_ROUNDS);
-                let robotCount = 0, robotIndex = 0;
+                let robotCount = 0, robotQueue = [];
 
                 model.forEachRobot((robot, location) => {
                     robot.policy = policy;
@@ -146,19 +146,20 @@ function buildController() {
                 });
 
                 function go() {
-                    let i = 0;
-                    model.forEachRobot((robot, location) => {
-                        if (robotIndex === i++) {
-                            if (running) {
-                                const {position, reward} = model.action(robot, robot.nextAction());
-                                robot.position = position;
-                                robot.score += reward;
-                            }
+                    if (!robotQueue.length){
+                        model.forEachRobot(robot => robotQueue.push(robot), true);
+                    }
+                    const robot = robotQueue.shift()
+                    if (running) {
+                        const action = robot.nextAction();
+                        if (action) {
+                            const {position, reward} = model.action(robot, action);
+                            robot.position = position;
+                            robot.score += reward;
                         }
-                    });
+                    }
 
                     if (running) {
-                        robotIndex = (robotIndex + 1) % robotCount;
                         setTimeout(go, MOVE_INTERVAL_MILLIS / robotCount);
                     }
                 }
