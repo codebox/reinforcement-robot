@@ -51,14 +51,14 @@ function buildView($container) {
             const gridHtml = buildGridHtml(gridWidth, gridHeight);
             $container.html(gridHtml);
 
-            $container.find('.gridCell').on('mouseover mousedown', event => {
+            $container.find('.gridCell').on('mouseover mouseleave', event => {
                 if (event.buttons) {
                     $(view).trigger('setSelected', [getX(event.target), getY(event.target), true]);
                 }
             });
 
             $container.find('.gridCell').on('click', event => {
-                $(view).trigger('setSelected', [getX(event.target), getY(event.target), true]);
+                $(view).trigger('setSelected', [getX(event.target), getY(event.target)]);
             });
         },
         refresh(model, agents) {

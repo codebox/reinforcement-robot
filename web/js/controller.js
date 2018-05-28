@@ -83,7 +83,7 @@ function buildController() {
             }
 
             onViewEvent('setSelected', (_, x, y, isSelected) => {
-                model.forLocation(x, y, l => l.selected = isSelected);
+                model.forLocation(x, y, l => l.selected = isSelected || !l.selected);
             });
 
             onViewEvent('setBlocks', () => {
