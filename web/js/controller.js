@@ -3,16 +3,7 @@ function buildController() {
 
     let animationRequestId, nextRobotId, running;
 
-    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 1000, POLICY_ROUNDS = 100;
-
-    function forEachSelected(model, fn) {
-        model.forEachLocation(l => {
-            if (l.selected) {
-                l.selected = false;
-                fn(l);
-            }
-        });
-    }
+    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 500, POLICY_ROUNDS = 100;
 
     return {
         init(model, view) {
@@ -21,6 +12,16 @@ function buildController() {
             }
             running = false;
             nextRobotId = 0;
+
+            function forEachSelected(model, fn) {
+                model.forEachLocation(l => {
+                    if (l.selected) {
+                        l.selected = false;
+                        fn(l);
+                    }
+                });
+                view.updateSelectionStatus(false);
+            }
 
             function moveRobots(robotLocationsToMove, dx, dy) {
                 function makeNewLocation(l) {
@@ -84,6 +85,20 @@ function buildController() {
 
             onViewEvent('setSelected', (_, x, y, isSelected) => {
                 model.forLocation(x, y, l => l.selected = isSelected || !l.selected);
+                let anySelected = isSelected;
+                if (!isSelected) {
+                    model.forEachLocation(l => {
+                        if (l.selected) {
+                            anySelected = true;
+                        }
+                    });
+                }
+                view.updateSelectionStatus(anySelected);
+            });
+
+            onViewEvent('deselectAll', (_, value) => {
+                forEachSelected(model, $.noop);
+                view.updateSelectionStatus(false);
             });
 
             onViewEvent('setBlocks', () => {
@@ -98,8 +113,12 @@ function buildController() {
                 forEachSelected(model, l => l.value = value);
             });
 
-            onViewEvent('deselectAll', (_, value) => {
-                forEachSelected(model, $.noop);
+            onViewEvent('showPolicy', () => {
+                view.showPolicy(model, buildPolicy(model));
+            });
+
+            onViewEvent('hidePolicy', () => {
+                view.refresh(model);
             });
 
             onViewEvent('reset', (_, value) => {

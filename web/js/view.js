@@ -9,11 +9,7 @@ function buildView($container) {
         $setRobot = $('#setRobot'),
         $configs = $('#configs'),
         $startStop = $('#startStop'),
-
-        STATE_RUNNING = Symbol(),
-        STATE_STOPPED = Symbol();
-
-    let runState = STATE_STOPPED;
+        $policy = $('#policy');
 
     function makeCellId(x,y) {
         return `cell_${x}_${y}`;
@@ -46,6 +42,55 @@ function buildView($container) {
         return Number($(el).attr('data-y'));
     }
 
+    const stateMachine = (() => {
+        const STATE_START = Symbol(),
+            STATE_RUNNING = Symbol(),
+            STATE_SELECTED = Symbol(),
+            STATE_POLICY = Symbol();
+
+        let currentState;
+
+        function updateUi(newState) {
+            $startStop.text(newState === STATE_RUNNING ? 'Stop' : 'Start');
+            $startStop.prop('disabled', ! [STATE_START, STATE_RUNNING].includes(newState));
+            $setBlockBtn.prop('disabled', newState !== STATE_SELECTED);
+            $setTerminalBtn.prop('disabled', newState !== STATE_SELECTED);
+            $setBoxValueBtn.prop('disabled', newState !== STATE_SELECTED);
+            $boxValueInput.prop('disabled', newState !== STATE_SELECTED);
+            $deselectAll.prop('disabled', newState !== STATE_SELECTED);
+            $setRobot.prop('disabled', newState !== STATE_SELECTED);
+            $policy.text(newState === STATE_POLICY ? 'Hide Policy' : 'Show Policy');
+            $policy.prop('disabled', newState === STATE_RUNNING);
+        }
+        return {
+            start() {
+                updateUi(currentState = STATE_START);
+            },
+            running() {
+                if ([STATE_START, STATE_SELECTED].includes(currentState)) {
+                    updateUi(currentState = STATE_RUNNING);
+                }
+            },
+            selected() {
+                if ([STATE_START].includes(currentState)) {
+                    updateUi(currentState = STATE_SELECTED);
+                }
+            },
+            policy() {
+                if ([STATE_START, STATE_SELECTED].includes(currentState)) {
+                    updateUi(currentState = STATE_POLICY);
+                }
+            },
+
+            isRunning() {
+                return currentState === STATE_RUNNING;
+            },
+            isShowingPolicy() {
+                return currentState === STATE_POLICY;
+            }
+        };
+    })();
+
     const view = {
         setup(gridWidth, gridHeight) {
             const gridHtml = buildGridHtml(gridWidth, gridHeight);
@@ -61,7 +106,20 @@ function buildView($container) {
                 $(view).trigger('setSelected', [getX(event.target), getY(event.target)]);
             });
         },
-        refresh(model, agents) {
+        updateSelectionStatus(anySelected) {
+            if (anySelected) {
+                stateMachine.selected();
+            } else {
+                stateMachine.start();
+            }
+        },
+        setState() {
+            return stateMachine;
+        },
+        refresh(model) {
+            if (stateMachine.isShowingPolicy()) {
+                return;
+            }
             model.forEachLocation(location => {
                 const $cell = $(`#${makeCellId(location.x, location.y)}`),
                     contents   = location.contents || {},
@@ -69,6 +127,8 @@ function buildView($container) {
                     hasBlock   = !! contents.block,
                     isTerminal = !! contents.terminal,
                     hasRobot   = !! contents.robot;
+
+                $cell.css('background-image', '');
 
                 if (hasBlock) {
                     $cell.text('');
@@ -163,15 +223,23 @@ function buildView($container) {
         $(view).trigger('robots');
     });
 
-    $startStop.on('click', () => {
-        if (runState == STATE_RUNNING) {
-            runState = STATE_STOPPED;
-            $(view).trigger('stop');
-            $startStop.text('Start');
+    $policy.on('click', () => {
+        if (!stateMachine.isShowingPolicy()) {
+            stateMachine.policy();
+            $(view).triggerHandler('showPolicy');
         } else {
-            runState = STATE_RUNNING;
+            stateMachine.start();
+            $(view).trigger('hidePolicy');
+        }
+    });
+
+    $startStop.on('click', () => {
+        if (stateMachine.isRunning()) {
+            stateMachine.start();
+            $(view).trigger('stop');
+        } else {
+            stateMachine.running();
             $(view).trigger('start');
-            $startStop.text('Stop');
         }
     });
 
@@ -188,6 +256,8 @@ function buildView($container) {
             $(view).trigger('moveRobotsBy', [-1, 0]);
         }
     });
+
+    view.setState().start();
 
     return view;
 }
