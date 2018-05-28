@@ -33,7 +33,7 @@ function buildGrid(width, height, initValue = 0) {
 }
 
 function buildModel(width, height) {
-    const grid = buildGrid(width, height), robots = [];
+    let grid = buildGrid(width, height), robots = [];
 
     function getLocation(x,y) {
         return grid.forLocation(x, y, l => l);
@@ -152,6 +152,11 @@ function buildModel(width, height) {
 
         forLocation(x, y, fn) {
             return grid.forLocation(x, y, fn);
+        },
+
+        reset() {
+            grid = buildGrid(width, height);
+            robots = [];
         },
 
         print() {

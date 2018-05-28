@@ -122,22 +122,8 @@ function buildController() {
             });
 
             onViewEvent('reset', (_, value) => {
-                function resetLocation(l) {
-                    l.selected = false;
-                    l.contents = undefined;
-                }
-
-                let foundSelection;
-
-                forEachSelected(model, l => {
-                    foundSelection = true;
-                    resetLocation(l);
-                });
-
-                if (!foundSelection){
-                    model.forEachLocation(resetLocation);
-                    nextRobotId = 0;
-                }
+                model.reset();
+                nextRobotId = 0;
             });
 
             onViewEvent('robots', (_, value) => {

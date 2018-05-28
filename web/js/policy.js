@@ -8,7 +8,7 @@ function buildPolicy(model, rounds = 1000) {
 
     function makeGreedyPolicyUsingValueFunction(valueFn) {
         function canMoveToLocation(l) {
-            return !l.contents || l.contents.terminal;
+            return !l.contents || l.contents.terminal || l.contents.robot;
         }
 
         return location => {

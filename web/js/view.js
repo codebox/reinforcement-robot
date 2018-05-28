@@ -58,9 +58,13 @@ function buildView($container) {
             $setBoxValueBtn.prop('disabled', newState !== STATE_SELECTED);
             $boxValueInput.prop('disabled', newState !== STATE_SELECTED);
             $deselectAll.prop('disabled', newState !== STATE_SELECTED);
+            $reset.prop('disabled', [STATE_RUNNING, STATE_POLICY].includes(newState));
             $setRobot.prop('disabled', newState !== STATE_SELECTED);
             $policy.text(newState === STATE_POLICY ? 'Hide Policy' : 'Show Policy');
-            $policy.prop('disabled', newState === STATE_RUNNING);
+            $policy.prop('disabled', ![STATE_START, STATE_POLICY].includes(newState));
+            if (newState === STATE_POLICY) {
+                $('.gridCell').removeClass('robot');
+            }
         }
         return {
             start() {
@@ -216,6 +220,7 @@ function buildView($container) {
     });
 
     $reset.on('click', () => {
+        stateMachine.start();
         $(view).trigger('reset');
     });
 
