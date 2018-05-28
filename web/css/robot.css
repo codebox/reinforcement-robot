@@ -32,6 +32,7 @@
     margin: 0px;
     background-color: white;
     font-family: sans-serif;
+    background-size: contain;
 }
 ::selection {
     background: transparent;
