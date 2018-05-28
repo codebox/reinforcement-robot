@@ -150,7 +150,7 @@ function buildController() {
                         model.forEachRobot(robot => robotQueue.push(robot), true);
                     }
                     const robot = robotQueue.shift()
-                    if (running) {
+                    if (running && robot) {
                         const action = robot.nextAction();
                         if (action) {
                             const {position, reward} = model.action(robot, action);
