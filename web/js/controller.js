@@ -148,6 +148,11 @@ function buildController() {
                 view.showPolicy(model);
             });
 
+            onViewEvent('moveCost', (_, value) => {
+                model.moveCost = value;
+                view.showPolicy(model);
+            });
+
             onViewEvent('config', (_, name) => {
                 nextRobotId = 0;
                 configs.apply(name, model);

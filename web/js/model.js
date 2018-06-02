@@ -33,7 +33,12 @@ function buildGrid(width, height, initValue = 0) {
 }
 
 function buildModel(width, height) {
-    let grid = buildGrid(width, height), robots = [], policy, _rounds = 1;
+    const DEFAULT_POLICY_ROUNDS = 10,
+        DEFAULT_MOVE_COST = 1;
+
+    let grid = buildGrid(width, height), robots = [], policy,
+        _rounds = DEFAULT_POLICY_ROUNDS,
+        _moveCost = DEFAULT_MOVE_COST;
 
     function getLocation(x,y) {
         return grid.forLocation(x, y, l => l);
@@ -42,6 +47,7 @@ function buildModel(width, height) {
     const model = {
         width,
         height,
+
         get rounds(){
             return _rounds;
         },
@@ -51,7 +57,17 @@ function buildModel(width, height) {
                 policy = undefined;
             }
         },
-        moveCost : 1,
+
+        get moveCost(){
+            return _moveCost;
+        },
+        set moveCost(newValue){
+            if (_moveCost !== newValue){
+                _moveCost = newValue;
+                policy = undefined;
+            }
+        },
+
         addRobot(robot, initX, initY){
             const location = getLocation(initX, initY);
             if (location && !location.contents) {
@@ -83,11 +99,11 @@ function buildModel(width, height) {
 
             if (isEmpty || isTerminal) {
                 position = {x: newLocation.x, y: newLocation.y};
-                reward = newLocation.value;
+                reward = newLocation.value - model.moveCost;
 
             } else {
                 position = {x : startPosition.x, y : startPosition.y};
-                reward = currentLocation.value;
+                reward = currentLocation.value - model.moveCost;
             }
 
             return reward;
@@ -102,18 +118,18 @@ function buildModel(width, height) {
                 if (newLocation && newLocation.contents && newLocation.contents.terminal) {
                     delete currentLocation.contents;
                     position = {x: newLocation.x, y: newLocation.y};
-                    reward = newLocation.value;
+                    reward = newLocation.value - model.moveCost;
                     robot.finished = true;
 
                 } else if (newLocation && !newLocation.contents) {
                     delete currentLocation.contents;
                     newLocation.contents = {robot};
                     position = {x: newLocation.x, y: newLocation.y};
-                    reward = newLocation.value;
+                    reward = newLocation.value - model.moveCost;
 
                 } else {
                     position = robot.position;
-                    reward = currentLocation.value;
+                    reward = currentLocation.value - model.moveCost;
                 }
 
             } else {

@@ -12,7 +12,8 @@ function buildView($container) {
         $startStop = $('#startStop'),
         $policy = $('#policy'),
         $policyRounds = $('#policyRounds'),
-        $scoreDisplay = $('#scoreDisplay');
+        $scoreDisplay = $('#scoreDisplay'),
+        $moveCost = $('#moveCost');
 
     function makeCellId(x,y) {
         return `cell_${x}_${y}`;
@@ -171,6 +172,8 @@ function buildView($container) {
             });
 
             $policyRounds.val(model.rounds);
+            $moveCost.val(model.moveCost);
+
             $scoreDisplay.html('');
             if (hasRobots){
                 $scoreDisplay.html('<h4>Scores</h4><ul></ul>');
@@ -253,6 +256,10 @@ function buildView($container) {
         $(view).trigger('policyRounds', $policyRounds.val());
     });
 
+    $moveCost.on('change', () => {
+        $(view).trigger('moveCost', $moveCost.val());
+    });
+
     $policy.on('click', () => {
         if (!stateMachine.isShowingPolicy()) {
             stateMachine.policy();
@@ -281,6 +288,10 @@ function buildView($container) {
     });
 
     $policyRounds.on('keydown', e => {
+        event.stopPropagation();
+    });
+
+    $moveCost.on('keydown', e => {
         event.stopPropagation();
     });
 
