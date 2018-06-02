@@ -1,10 +1,10 @@
-function buildPolicy(model, rounds = 1000) {
+function buildPolicy(model) {
     const MOVES = [
         {dx: 0, dy:-1},
         {dx: 0, dy: 1},
         {dx:-1, dy: 0},
         {dx: 1, dy: 0}
-    ], MOVE_COST = 1;
+    ];
 
     function makeGreedyPolicyUsingValueFunction(valueFn) {
         function canMoveToLocation(l) {
@@ -61,7 +61,7 @@ function buildPolicy(model, rounds = 1000) {
                         newX = l.x;
                         newY = l.y;
                     }
-                    value += (reward + model.forLocation(l.x, l.y, l => l.value) - MOVE_COST) / policyMoves.length;
+                    value += (reward + model.forLocation(l.x, l.y, l => l.value) - model.moveCost) / policyMoves.length;
                 });
             }
             values.forLocation(l.x, l.y, v => v.value = value);
@@ -76,7 +76,8 @@ function buildPolicy(model, rounds = 1000) {
         let currentValueFn = (x,y) => model.forLocation(x, y, l => l.value),
             currentPolicy = makeGreedyPolicyUsingValueFunction(currentValueFn);
 
-        for (let r = 0; r < rounds; r++) {
+        for (let r = 0; r < rounds-1; r++) {
+            console.log('r=',r)
             const newValueFn = buildValueFnForPolicy(currentPolicy, currentValueFn),
                 newPolicy = makeGreedyPolicyUsingValueFunction(newValueFn);
 
@@ -86,5 +87,5 @@ function buildPolicy(model, rounds = 1000) {
         return currentPolicy;
     }
 
-    return improvePolicy(rounds);
+    return improvePolicy(model.rounds);
 }

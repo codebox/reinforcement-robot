@@ -10,7 +10,9 @@ function buildView($container) {
         $setRobot = $('#setRobot'),
         $configs = $('#configs'),
         $startStop = $('#startStop'),
-        $policy = $('#policy');
+        $policy = $('#policy'),
+        $policyRounds = $('#policyRounds'),
+        $scoreDisplay = $('#scoreDisplay');
 
     function makeCellId(x,y) {
         return `cell_${x}_${y}`;
@@ -64,6 +66,8 @@ function buildView($container) {
             $setRobot.prop('disabled', newState !== STATE_SELECTED);
             $policy.text(newState === STATE_POLICY ? 'Hide Policy' : 'Show Policy');
             $policy.prop('disabled', ![STATE_START, STATE_POLICY].includes(newState));
+            $configs.css('display', newState === STATE_START ? 'block' : 'none');
+            $policyRounds.prop('disabled', newState !== STATE_POLICY);
             if (newState === STATE_POLICY) {
                 $('.gridCell').removeClass('robot');
             }
@@ -166,11 +170,12 @@ function buildView($container) {
                 hasRobots |= hasRobot;
             });
 
-            $('#scoreDisplay').html('');
+            $policyRounds.val(model.rounds);
+            $scoreDisplay.html('');
             if (hasRobots){
-                $('#scoreDisplay').html('<h4>Scores</h4><ul></ul>');
+                $scoreDisplay.html('<h4>Scores</h4><ul></ul>');
                 model.forEachRobot(robot => {
-                    $('#scoreDisplay ul').append(`<li>${robot.id}: ${robot.score}</li>`)
+                    $scoreDisplay.find('ul').append(`<li>${robot.id}: ${robot.score}</li>`)
                 });
             }
         },
@@ -184,14 +189,14 @@ function buildView($container) {
                 $configs.append($li);
             });
         },
-        showPolicy(model, policy) {
+        showPolicy(model) {
             model.forEachLocation(l => {
                 if (l.contents && (l.contents.terminal || l.contents.block)) {
                     return;
                 }
                 const $cell = $(`#${makeCellId(l.x, l.y)}`);
                 let flags = 0;
-                policy(l).forEach(m => {
+                model.policy(l).forEach(m => {
                     if (m.dy === -1){
                         flags += 1;
                     } else if (m.dy === 1){
@@ -244,6 +249,10 @@ function buildView($container) {
         $(view).trigger('clear');
     });
 
+    $policyRounds.on('change', () => {
+        $(view).trigger('policyRounds', $policyRounds.val());
+    });
+
     $policy.on('click', () => {
         if (!stateMachine.isShowingPolicy()) {
             stateMachine.policy();
@@ -270,6 +279,11 @@ function buildView($container) {
             setCellValues();
         }
     });
+
+    $policyRounds.on('keydown', e => {
+        event.stopPropagation();
+    });
+
     $(document).on('keydown', e => {
         if (e.which === 27) {
             $(view).trigger('deselectAll');

@@ -33,14 +33,25 @@ function buildGrid(width, height, initValue = 0) {
 }
 
 function buildModel(width, height) {
-    let grid = buildGrid(width, height), robots = [];
+    let grid = buildGrid(width, height), robots = [], policy, _rounds = 1;
 
     function getLocation(x,y) {
         return grid.forLocation(x, y, l => l);
     }
 
     return {
-        width, height,
+        width,
+        height,
+        get rounds(){
+            return _rounds;
+        },
+        set rounds(newValue){
+            if (_rounds !== newValue){
+                _rounds = newValue;
+                policy = undefined;
+            }
+        },
+        moveCost : 1,
         addRobot(robot, initX, initY){
             const location = getLocation(initX, initY);
             if (location && !location.contents) {
@@ -158,6 +169,13 @@ function buildModel(width, height) {
             grid = buildGrid(this.width, this.height);
             buildRobot.reset();
             robots = [];
+        },
+
+        policy(location){
+            if (!policy) {
+                policy = buildPolicy(this);
+            }
+            return policy(location);
         },
 
         print() {

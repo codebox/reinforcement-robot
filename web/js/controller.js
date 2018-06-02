@@ -3,7 +3,7 @@ function buildController() {
 
     let animationRequestId, nextRobotId, running;
 
-    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 500, POLICY_ROUNDS = 100;
+    const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 500;
 
     return {
         init(model, view) {
@@ -119,7 +119,7 @@ function buildController() {
             });
 
             onViewEvent('showPolicy', () => {
-                view.showPolicy(model, buildPolicy(model));
+                view.showPolicy(model);
             });
 
             onViewEvent('hidePolicy', () => {
@@ -143,6 +143,11 @@ function buildController() {
                 });
             });
 
+            onViewEvent('policyRounds', (_, value) => {
+                model.rounds = value;
+                view.showPolicy(model);
+            });
+
             onViewEvent('config', (_, name) => {
                 nextRobotId = 0;
                 configs.apply(name, model);
@@ -152,11 +157,10 @@ function buildController() {
             onViewEvent('start', () => {
                 running = true;
 
-                const policy = buildPolicy(model, POLICY_ROUNDS);
                 let robotCount = 0, robotQueue = [];
 
                 model.forEachRobot((robot, location) => {
-                    robot.policy = policy;
+                    robot.policy = model.policy;
                     robotCount++;
                 });
 

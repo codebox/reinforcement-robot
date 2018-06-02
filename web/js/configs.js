@@ -13,9 +13,8 @@ function buildConfigs() {
         });
     }
 
-    function addRobot(model, policy, x, y, id) {
+    function addRobot(model, x, y, id) {
         const robot = buildRobot();
-        robot.policy = policy;
         robot.position = {x,y};
         model.addRobot(robot, x, y);
     }
@@ -63,8 +62,7 @@ function buildConfigs() {
             addTerminal(model, at(3,1));
             setValue(model, at(3,1), -100);
 
-            const policy = buildPolicy(model);
-            addRobot(model, policy, 3, 2, 'A')
+            addRobot(model, 3, 2, 'A')
         },
         'Find the Centre' : model => {
             setGridSize(model, 10);
@@ -75,11 +73,10 @@ function buildConfigs() {
                 l.contents = undefined;
             });
 
-            const policy = buildPolicy(model);
-            addRobot(model, policy, 0, 0, 'A');
-            addRobot(model, policy, 0, model.height - 1, 'B');
-            addRobot(model, policy, model.width - 1, 0, 'C');
-            addRobot(model, policy, model.width - 1, model.height - 1, 'D');
+            addRobot(model, 0, 0, 'A');
+            addRobot(model, 0, model.height - 1, 'B');
+            addRobot(model, model.width - 1, 0, 'C');
+            addRobot(model, model.width - 1, model.height - 1, 'D');
 
             const x1 = 2, x2 = model.width - 3, y1 = 2, y2 = model.height - 3;
             addBlock(model, at(x1, y1));
