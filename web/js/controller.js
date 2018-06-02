@@ -34,7 +34,7 @@ function buildController() {
                 let robotLocations = [];
                 robotLocationsToMove.forEach(l => {
                     robotLocations.push({
-                        robot: l.contents,
+                        robot: l.contents.robot,
                         oldLocation: l,
                         newLocation: makeNewLocation(l)
                     });
@@ -56,7 +56,8 @@ function buildController() {
                 if (availableLocationCount === robotLocationsToMove.length) {
                     robotLocations.forEach(rl => {
                         model.forLocation(rl.newLocation.x, rl.newLocation.y, l => {
-                            l.contents = rl.robot;
+                            rl.robot.position = rl.newLocation;
+                            l.contents = {robot:rl.robot};
                             l.selected = true;
                         });
                     });
@@ -64,12 +65,13 @@ function buildController() {
                 } else {
                     robotLocations.forEach(rl => {
                         model.forLocation(rl.oldLocation.x, rl.oldLocation.y, l => {
-                            l.contents = rl.robot
+                            l.contents = {robot:rl.robot};
                             l.selected = true;
                         });
                     });
-
                 }
+
+                view.updateSelectionStatus(true);
             }
 
             let strategies;
