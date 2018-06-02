@@ -81,12 +81,23 @@ header, section {
     border: none;
     padding: 0;
 }
-#sidebar ul {
+#sidebar ul{
     padding: 0;
     list-style-type: none;
 }
-#sidebar li {
+#configs li {
     text-decoration: underline;
     color: blue;
     cursor: pointer;
+}
+#scoreDisplay h4 {
+    margin-bottom: 0px;
+    background-image: url("../images/robot.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 16px;
+}
+#scoreDisplay ul {
+    padding: 0;
+    margin-top: 5px;
 }

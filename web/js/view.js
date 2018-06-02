@@ -6,6 +6,7 @@ function buildView($container) {
         $boxValueInput = $('#boxValue'),
         $deselectAll = $('#deselectAll'),
         $reset = $('#reset'),
+        $clear = $('#clear'),
         $setRobot = $('#setRobot'),
         $configs = $('#configs'),
         $startStop = $('#startStop'),
@@ -58,6 +59,7 @@ function buildView($container) {
             $setBoxValueBtn.prop('disabled', newState !== STATE_SELECTED);
             $boxValueInput.prop('disabled', newState !== STATE_SELECTED);
             $deselectAll.prop('disabled', newState !== STATE_SELECTED);
+            $clear.prop('disabled', newState !== STATE_SELECTED);
             $reset.prop('disabled', [STATE_RUNNING, STATE_POLICY].includes(newState));
             $setRobot.prop('disabled', newState !== STATE_SELECTED);
             $policy.text(newState === STATE_POLICY ? 'Hide Policy' : 'Show Policy');
@@ -124,6 +126,7 @@ function buildView($container) {
             if (stateMachine.isShowingPolicy()) {
                 return;
             }
+            let hasRobots;
             model.forEachLocation(location => {
                 const $cell = $(`#${makeCellId(location.x, location.y)}`),
                     contents   = location.contents || {},
@@ -159,12 +162,17 @@ function buildView($container) {
 
                     $cell.css('backgroundColor', `rgba(${r}, ${g}, 0, ${a})`);
                 }
+
+                hasRobots |= hasRobot;
             });
 
-            $('#scoreDisplay').html('<ul></ul>');
-            model.forEachRobot(robot => {
-                $('#scoreDisplay ul').append(`<li>${robot.id}: ${robot.score} ${!!robot.finished}</li>`)
-            });
+            $('#scoreDisplay').html('');
+            if (hasRobots){
+                $('#scoreDisplay').html('<h4>Scores</h4><ul></ul>');
+                model.forEachRobot(robot => {
+                    $('#scoreDisplay ul').append(`<li>${robot.id}: ${robot.score}</li>`)
+                });
+            }
         },
         setConfigs(configs) {
             $configs.empty();
@@ -230,6 +238,10 @@ function buildView($container) {
 
     $setRobot.on('click', () => {
         $(view).trigger('robots');
+    });
+
+    $clear.on('click', () => {
+        $(view).trigger('clear');
     });
 
     $policy.on('click', () => {

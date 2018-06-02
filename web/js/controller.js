@@ -80,7 +80,10 @@ function buildController() {
             view.refresh(model);
 
             function onViewEvent(eventName, handler) {
-                $(view).off(eventName).on(eventName, handler);
+                $(view).off(eventName).on(eventName, (...args) => {
+                    handler(...args);
+                    view.refresh(model);
+                });
             }
 
             onViewEvent('setSelected', (_, x, y, isSelected) => {
@@ -124,6 +127,10 @@ function buildController() {
             onViewEvent('reset', (_, value) => {
                 model.reset();
                 nextRobotId = 0;
+            });
+
+            onViewEvent('clear', () => {
+                forEachSelected(model, l => l.contents = null);
             });
 
             onViewEvent('robots', (_, value) => {
@@ -188,7 +195,9 @@ function buildController() {
 
             function renderView(){
                 animationRequestId = requestAnimationFrame(renderView);
-                view.refresh(model);
+                if (running) {
+                    view.refresh(model);
+                }
             }
             renderView();
         }
