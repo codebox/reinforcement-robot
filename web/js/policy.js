@@ -77,7 +77,6 @@ function buildPolicy(model) {
             currentPolicy = makeGreedyPolicyUsingValueFunction(currentValueFn);
 
         for (let r = 0; r < rounds-1; r++) {
-            console.log('r=',r)
             const newValueFn = buildValueFnForPolicy(currentPolicy, currentValueFn),
                 newPolicy = makeGreedyPolicyUsingValueFunction(newValueFn);
 
