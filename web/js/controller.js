@@ -137,6 +137,7 @@ function buildController() {
             onViewEvent('config', (_, name) => {
                 nextRobotId = 0;
                 configs.apply(name, model);
+                view.setup(model.width, model.height);
             });
 
             onViewEvent('start', () => {

@@ -209,11 +209,15 @@ function buildView($container) {
     });
 
     $setBoxValueBtn.on('click', () => {
+        setCellValues();
+    });
+
+    function setCellValues() {
         const val = Number($boxValueInput.val());
         if (! isNaN(val)) {
             $(view).trigger('setValues', val);
         }
-    });
+    }
 
     $deselectAll.on('click', () => {
         $(view).trigger('deselectAll');
@@ -248,6 +252,12 @@ function buildView($container) {
         }
     });
 
+    $boxValueInput.on('keydown', e => {
+        event.stopPropagation();
+        if (e.which === 13) {
+            setCellValues();
+        }
+    });
     $(document).on('keydown', e => {
         if (e.which === 27) {
             $(view).trigger('deselectAll');
