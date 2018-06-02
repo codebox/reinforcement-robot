@@ -156,6 +156,7 @@ function buildModel(width, height) {
 
         reset() {
             grid = buildGrid(this.width, this.height);
+            buildRobot.reset();
             robots = [];
         },
 

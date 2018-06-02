@@ -1,7 +1,7 @@
 const buildRobot = (() => {
     let nextId = 0;
 
-    return () => {
+    const build = () => {
         return {
             id : String.fromCharCode(65 + (nextId++ % 26)),
             score: 0,
@@ -11,5 +11,11 @@ const buildRobot = (() => {
             }
         };
     };
+
+    build.reset = () => {
+        nextId = 0;
+    };
+
+    return build;
 })();
 
