@@ -39,7 +39,7 @@ function buildModel(width, height) {
         return grid.forLocation(x, y, l => l);
     }
 
-    return {
+    const model = {
         width,
         height,
         get rounds(){
@@ -174,7 +174,7 @@ function buildModel(width, height) {
 
         policy(location){
             if (!policy) {
-                policy = buildPolicy(this);
+                policy = buildPolicy(model);
             }
             return policy(location);
         },
@@ -183,4 +183,5 @@ function buildModel(width, height) {
             grid.print(l => (l.contents && l.contents.id) || '_')
         }
     };
+    return model;
 }
