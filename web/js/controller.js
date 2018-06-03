@@ -161,14 +161,20 @@ function buildController() {
             });
 
             onViewEvent('start', () => {
-                running = true;
-
                 let robotCount = 0, robotQueue = [];
 
                 model.forEachRobot((robot, location) => {
                     robot.policy = model.policy;
                     robotCount++;
                 });
+
+                running = !!robotCount;
+
+                if (!robotCount){
+                    view.setState().start();
+                    view.refresh(model);
+                    return;
+                }
 
                 function go() {
                     if (!robotQueue.length){
@@ -203,6 +209,16 @@ function buildController() {
                     }
                 });
                 moveRobots(robotLocationsToMove, dx, dy);
+            });
+
+            $(model).on('robotFinished', () => {
+                let robotCount = 0;
+                model.forEachRobot(() => robotCount++);
+                if (!robotCount){
+                    running = false;
+                    view.setState().start();
+                    view.refresh(model);
+                }
             });
 
             function renderView(){

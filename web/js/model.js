@@ -120,6 +120,7 @@ function buildModel(width, height) {
                     position = {x: newLocation.x, y: newLocation.y};
                     reward = newLocation.value - model.moveCost;
                     robot.finished = true;
+                    $(model).trigger('robotFinished');
 
                 } else if (newLocation && !newLocation.contents) {
                     delete currentLocation.contents;
