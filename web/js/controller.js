@@ -5,7 +5,7 @@ function buildController() {
 
     const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 500;
 
-    return {
+    const controller = {
         init(model, view) {
             if (animationRequestId) {
                 cancelAnimationFrame(animationRequestId);
@@ -130,6 +130,7 @@ function buildController() {
 
             onViewEvent('showPolicy', () => {
                 view.showPolicy(model);
+                $(controller).trigger('showPolicy');
             });
 
             onViewEvent('hidePolicy', () => {
@@ -166,6 +167,7 @@ function buildController() {
             onViewEvent('config', (_, name) => {
                 configs.apply(name, model);
                 view.setup(model.width, model.height);
+                $(controller).trigger('config', name);
             });
 
             onViewEvent('start', () => {
@@ -181,6 +183,7 @@ function buildController() {
                 if (!robotCount){
                     view.setState().start();
                     view.refresh(model);
+                    $(controller).trigger('norobots');
                     return;
                 }
 
@@ -236,6 +239,11 @@ function buildController() {
                 }
             }
             renderView();
+
+            buildHelp(view).listen(controller);
+
+            $(controller).triggerHandler('init');
         }
     };
+    return controller;
 }

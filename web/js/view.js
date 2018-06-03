@@ -221,6 +221,9 @@ function buildView($container) {
                 const img = `url('images/${flags & 1 ? 'n' : 'x'}${flags & 2 ? 'e' : 'x'}${flags & 4 ? 's' : 'x'}${flags & 8 ? 'w' : 'x'}.png')`;
                 $cell.css('background-image', img);
             });
+        },
+        showHelpMessage(msg) {
+            console.log(msg);//TODO
         }
     };
 
