@@ -1,7 +1,7 @@
 function buildController() {
     "use strict";
 
-    let animationRequestId, nextRobotId, running;
+    let animationRequestId, running;
 
     const configs = buildConfigs(), MOVE_INTERVAL_MILLIS = 500;
 
@@ -11,7 +11,6 @@ function buildController() {
                 cancelAnimationFrame(animationRequestId);
             }
             running = false;
-            nextRobotId = 0;
 
             function forEachSelected(model, fn) {
                 model.forEachLocation(l => {
@@ -108,14 +107,17 @@ function buildController() {
 
             onViewEvent('setBlocks', () => {
                 forEachSelected(model, l => l.contents = {block : true});
+                model.invaldiatePolicy();
             });
 
             onViewEvent('setTerminals', () => {
                 forEachSelected(model, l => l.contents = {terminal : true});
+                model.invaldiatePolicy();
             });
 
             onViewEvent('setValues', (_, value) => {
                 forEachSelected(model, l => l.value = value);
+                model.invaldiatePolicy();
             });
 
             onViewEvent('showPolicy', () => {
@@ -128,11 +130,11 @@ function buildController() {
 
             onViewEvent('reset', (_, value) => {
                 model.reset();
-                nextRobotId = 0;
             });
 
             onViewEvent('clear', () => {
                 forEachSelected(model, l => l.contents = null);
+                model.invaldiatePolicy();
             });
 
             onViewEvent('robots', (_, value) => {
@@ -154,7 +156,6 @@ function buildController() {
             });
 
             onViewEvent('config', (_, name) => {
-                nextRobotId = 0;
                 configs.apply(name, model);
                 view.setup(model.width, model.height);
             });

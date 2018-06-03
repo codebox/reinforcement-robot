@@ -54,7 +54,7 @@ function buildModel(width, height) {
         set rounds(newValue){
             if (_rounds !== newValue){
                 _rounds = newValue;
-                policy = undefined;
+                model.invaldiatePolicy();
             }
         },
 
@@ -64,7 +64,7 @@ function buildModel(width, height) {
         set moveCost(newValue){
             if (_moveCost !== newValue){
                 _moveCost = newValue;
-                policy = undefined;
+                model.invaldiatePolicy();
             }
         },
 
@@ -184,8 +184,12 @@ function buildModel(width, height) {
         reset() {
             grid = buildGrid(this.width, this.height);
             buildRobot.reset();
-            policy = undefined;
+            model.invaldiatePolicy();
             robots = [];
+        },
+
+        invaldiatePolicy(){
+            policy = undefined;
         },
 
         policy(location){
