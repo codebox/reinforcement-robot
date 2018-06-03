@@ -1,13 +1,69 @@
 #container{
     display: flex;
     flex-direction: column;
-    width: 800px;
+    width: 1000px;
     margin: 0 auto;
+    font-family: Helvetica;
+}
+button:focus {
+    outline:0;
 }
 #middlerow{
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+}
+#controls{
+    flex-basis: 150px;
+    display: flex;
+    flex-direction: column;
+}
+#controls hr {
+    width: 100%;
+    border-color: #c0c0c02a;
+    margin-bottom: 14px;
+}
+.controlsRow{
+    min-height: 40px;
+}
+.controlsRow label, .controlsRow input{
+    font-size: 12px;
+}
+.controlsRow.controlsInput{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.controlsRow input{
+    border-radius: 5px;
+    padding: 8px 16px;
+    color: #75a8d3;
+    border: 2px solid #75a8d3;
+}
+.controlsRow label {
+    color: #75a8d3;
+}
+.controlsRow input:disabled, .controlsRow label.disabled {
+    color: #c0c0c0;
+}
+.controlsRow input:disabled {
+    border: 2px solid #c0c0c0;
+}
+.controlsRow button{
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: #75a8d3;
+    border: 2px solid #75a8d3;
+    background-color: #75a8d32b;
+    cursor: pointer;
+}
+.controlsRow button:hover{
+    background-color: #75a8d34a;
+}
+.controlsRow button:disabled{
+    color: #c0c0c0;
+    border: 2px solid #c0c0c0;
+    background-color: #c0c0c02b;
+    cursor: default;
 }
 #grid{
     display: inline-block;
@@ -70,12 +126,9 @@
 header, section {
     padding: 1em;
 }
-header, section {
-    border: 1px solid black;
-}
 #sidebar {
     padding: 1em;
-    flex-basis: 100px;
+    flex-basis: 150px;
 }
 #sidebar section {
     border: none;
@@ -85,17 +138,19 @@ header, section {
     padding: 0;
     list-style-type: none;
 }
+#sidebar h4 {
+    font-weight: normal;
+    text-decoration: underline;
+    margin: 12px 0 0 0;
+}
+#sidebar li {
+    padding: 4px 0;
+    font-size: 14px;
+}
 #configs li {
     text-decoration: underline;
-    color: blue;
+    color: #75a8d3;
     cursor: pointer;
-}
-#scoreDisplay h4 {
-    margin-bottom: 0px;
-    background-image: url("../images/robot.png");
-    background-repeat: no-repeat;
-    background-position: right center;
-    background-size: 16px;
 }
 #scoreDisplay ul {
     padding: 0;

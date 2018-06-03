@@ -9,32 +9,57 @@
     <section id="container">
         <header>Reinforcement Robot</header>
         <div id="middlerow">
+            <section id="controls">
+                <div class="controlsRow">
+                    <button id="startStop">Start</button>
+                </div>
+                <hr>
+                <div class="controlsRow">
+                    <button id="setRobot">Robot</button>
+                </div>
+                <div class="controlsRow controlsInput">
+                    <label for="boxValue">Cell Value:</label><input type="number" id="boxValue">
+                </div>
+                <div class="controlsRow">
+                    <button id="setBlock">Block</button>
+                </div>
+                <div class="controlsRow">
+                    <button id="setTerminal">Goal</button>
+                </div>
+                <div class="controlsRow">
+                    <button id="deselectAll">Deselect All</button>
+                </div>
+                <div class="controlsRow">
+                    <button id="clear">Clear</button>
+                </div>
+                <hr>
+                <div class="controlsRow">
+                    <button id="policy">Show Policy</button>
+                </div>
+                <div class="controlsRow controlsInput">
+                    <label for="boxValue">Policy Rounds:</label><input type="number" min="1" id="policyRounds">
+                </div>
+                <div class="controlsRow controlsInput">
+                    <label for="moveCost">Move Cost:</label><input type="number" min="0" id="moveCost">
+                </div>
+                <hr>
+                <div class="controlsRow">
+                    <button id="reset">Reset</button>
+                </div>
+
+            </section>
             <section id="gridHolder">
                 <div id="grid"></div>
             </section>
             <section id="sidebar">
-                <ul id="configs">
-                </ul>
+                <section id="configs">
+                    <h4>Predefined</h4>
+                    <ul></ul>
+                </section>
                 <section id="scoreDisplay">
                 </section>
             </section>
         </div>
-        <section id="controls">
-            <label for="boxValue">Box Value:</label><input type="number" id="boxValue">
-            <button id="setBoxValue">Set</button>
-            <button id="deselectAll">Deselect All</button>
-            <button id="reset">Reset</button>
-            <button id="setBlock">Block</button>
-            <button id="setTerminal">Terminal</button>
-            <button id="clear">Clear</button>
-            <button id="setRobot">Robot</button>
-            <button id="startStop">Start</button>
-            <button id="policy">Show Policy</button>
-            <br>
-            <label for="boxValue">Policy Rounds:</label><input type="number" min="1" id="policyRounds">
-            <br>
-            <label for="moveCost">Move Cost:</label><input type="number" min="0" id="moveCost">
-        </section>
     </section>
 
     <script src="js/jquery-3.3.1.min.js"></script>

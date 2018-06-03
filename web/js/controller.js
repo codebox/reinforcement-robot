@@ -115,8 +115,16 @@ function buildController() {
                 model.invaldiatePolicy();
             });
 
-            onViewEvent('setValues', (_, value) => {
-                forEachSelected(model, l => l.value = value);
+            onViewEvent('setValues', (_, value, deselect) => {
+                model.forEachLocation(l => {
+                    if (l.selected) {
+                        l.value = value;
+                        l.selected = !deselect;
+                    }
+                });
+                if (deselect){
+                    view.updateSelectionStatus(false);
+                }
                 model.invaldiatePolicy();
             });
 

@@ -2,13 +2,13 @@
 function buildView($container) {
     const $setBlockBtn = $('#setBlock'),
         $setTerminalBtn = $('#setTerminal'),
-        $setBoxValueBtn = $('#setBoxValue'),
         $boxValueInput = $('#boxValue'),
         $deselectAll = $('#deselectAll'),
         $reset = $('#reset'),
         $clear = $('#clear'),
         $setRobot = $('#setRobot'),
         $configs = $('#configs'),
+        $configsList = $configs.find('ul'),
         $startStop = $('#startStop'),
         $policy = $('#policy'),
         $policyRounds = $('#policyRounds'),
@@ -59,8 +59,8 @@ function buildView($container) {
             $startStop.prop('disabled', ! [STATE_START, STATE_RUNNING].includes(newState));
             $setBlockBtn.prop('disabled', newState !== STATE_SELECTED);
             $setTerminalBtn.prop('disabled', newState !== STATE_SELECTED);
-            $setBoxValueBtn.prop('disabled', newState !== STATE_SELECTED);
             $boxValueInput.prop('disabled', newState !== STATE_SELECTED);
+            $boxValueInput.siblings().toggleClass('disabled', newState !== STATE_SELECTED);
             $deselectAll.prop('disabled', newState !== STATE_SELECTED);
             $clear.prop('disabled', newState !== STATE_SELECTED);
             $reset.prop('disabled', [STATE_RUNNING, STATE_POLICY].includes(newState));
@@ -69,6 +69,9 @@ function buildView($container) {
             $policy.prop('disabled', ![STATE_START, STATE_POLICY].includes(newState));
             $configs.css('display', newState === STATE_START ? 'block' : 'none');
             $policyRounds.prop('disabled', newState !== STATE_POLICY);
+            $policyRounds.siblings().toggleClass('disabled', newState !== STATE_POLICY);
+            $moveCost.prop('disabled', newState !== STATE_POLICY);
+            $moveCost.siblings().toggleClass('disabled', newState !== STATE_POLICY );
             if (newState === STATE_POLICY) {
                 $('.gridCell').removeClass('robot');
             }
@@ -131,7 +134,7 @@ function buildView($container) {
             if (stateMachine.isShowingPolicy()) {
                 return;
             }
-            let hasRobots;
+            let hasRobots, selectedCellValue;
             model.forEachLocation(location => {
                 const $cell = $(`#${makeCellId(location.x, location.y)}`),
                     contents   = location.contents || {},
@@ -169,10 +172,15 @@ function buildView($container) {
                 }
 
                 hasRobots |= hasRobot;
+
+                if (isSelected && selectedCellValue === undefined){
+                    selectedCellValue = location.value;
+                }
             });
 
             $policyRounds.val(model.rounds);
             $moveCost.val(model.moveCost);
+            $boxValueInput.val(selectedCellValue || 0);
 
             $scoreDisplay.html('');
             if (hasRobots){
@@ -183,13 +191,13 @@ function buildView($container) {
             }
         },
         setConfigs(configs) {
-            $configs.empty();
+            $configsList.empty();
             configs.forEach((name, handler) => {
                 const $li = $(`<li>${name}</li>`)
                 $li.on('click', () => {
                     $(view).trigger('config', name);
                 });
-                $configs.append($li);
+                $configsList.append($li);
             });
         },
         showPolicy(model) {
@@ -224,14 +232,21 @@ function buildView($container) {
         $(view).trigger('setTerminals');
     });
 
-    $setBoxValueBtn.on('click', () => {
+    $boxValueInput.on('change', () => {
         setCellValues();
     });
 
-    function setCellValues() {
+    $boxValueInput.on('keydown', e => {
+        event.stopPropagation();
+        if (e.which === 13){
+            setCellValues(true);
+        }
+    });
+
+    function setCellValues(deselect = false) {
         const val = Number($boxValueInput.val());
         if (! isNaN(val)) {
-            $(view).trigger('setValues', val);
+            $(view).trigger('setValues', [val, deselect]);
         }
     }
 
@@ -277,13 +292,6 @@ function buildView($container) {
         } else {
             stateMachine.running();
             $(view).trigger('start');
-        }
-    });
-
-    $boxValueInput.on('keydown', e => {
-        event.stopPropagation();
-        if (e.which === 13) {
-            setCellValues();
         }
     });
 
