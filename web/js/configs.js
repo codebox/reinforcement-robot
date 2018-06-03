@@ -5,6 +5,14 @@ function buildConfigs() {
         return l => l.x === x && l.y === y;
     }
 
+    function hLine(x1, x2, y){
+        return l => l.y === y && l.x >= x1 && l.x <= x2;
+    }
+
+    function vLine(x, y1, y2){
+        return l => l.x === x && l.y >= y1 && l.y <= y2;
+    }
+
     function set(model, matcher, op) {
         model.forEachLocation(l => {
             if (matcher(l)){
@@ -26,7 +34,6 @@ function buildConfigs() {
     function addTerminal(model, matcher) {
         set(model, matcher, l => l.contents = {terminal:true});
     }
-
 
     function setValue(model, matcher, value) {
         set(model, matcher, l => l.value = value);
@@ -94,6 +101,38 @@ function buildConfigs() {
             addBlock(model, at(x2, y2));
             addBlock(model, at(x2-2, y2));
             addBlock(model, at(x2, y2-2));
+        },
+        'Maze' : model => {
+            setGridSize(model, 12);
+
+            addTerminal(model, at(2,2));
+            addRobot(model, 11, 11, 'A');
+
+            addBlock(model, hLine(1,3,1));
+            addBlock(model, at(3,2));
+            addBlock(model, hLine(1,3,3));
+
+            addBlock(model, vLine(5,0,1));
+            addBlock(model, vLine(5,3,4));
+            addBlock(model, vLine(7,0,3));
+
+            addBlock(model, hLine(9,11,1));
+            addBlock(model, hLine(0,9,5));
+
+            addBlock(model, at(11,5));
+            addBlock(model, at(9,4));
+            addBlock(model, hLine(9,10,3));
+
+            addBlock(model, hLine(1,11,7));
+            addBlock(model, at(0,9));
+            addBlock(model, at(0,11));
+            addBlock(model, vLine(2,9,11));
+            addBlock(model, vLine(4,8,10));
+            addBlock(model, vLine(6,9,11));
+
+            addBlock(model, at(8,10));
+            addBlock(model, at(10,11));
+            addBlock(model, hLine(8,11,9));
         }
     };
 
