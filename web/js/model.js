@@ -144,7 +144,7 @@ function buildModel(width, height) {
             grid.forEachLocation(fn);
         },
 
-        forEachRobot(fn, random = false) {
+        forEachRobot(fn, random = false, skipFinished = true) {
             const robotLocations = [];
             grid.forEachLocation(l => {
                 if (l.contents && l.contents.robot) {
@@ -176,6 +176,12 @@ function buildModel(width, height) {
             robotLocations.forEach(l => {
                 fn(l.contents.robot, l);
             });
+
+            if (!skipFinished) {
+                robots.filter(r => r.finished).forEach(r => {
+                    fn(r);
+                });                
+            }
         },
 
         forLocation(x, y, fn) {

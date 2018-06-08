@@ -223,9 +223,13 @@ function buildController() {
             });
 
             $(model).on('robotFinished', () => {
-                let robotCount = 0;
-                model.forEachRobot(() => robotCount++);
-                if (!robotCount){
+                let activeRobotCount = 0;
+                model.forEachRobot(r => {
+                    if (!r.finished) {
+                        activeRobotCount++;                        
+                    }
+                });
+                if (!activeRobotCount){
                     running = false;
                     view.setState().start();
                     view.refresh(model);

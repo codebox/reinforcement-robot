@@ -134,7 +134,7 @@ function buildView($container) {
             if (stateMachine.isShowingPolicy()) {
                 return;
             }
-            let hasRobots, selectedCellValue;
+            let selectedCellValue;
             model.forEachLocation(location => {
                 const $cell = $(`#${makeCellId(location.x, location.y)}`),
                     contents   = location.contents || {},
@@ -171,8 +171,6 @@ function buildView($container) {
                     $cell.css('backgroundColor', `rgba(${r}, ${g}, 0, ${a})`);
                 }
 
-                hasRobots |= hasRobot;
-
                 if (isSelected && selectedCellValue === undefined){
                     selectedCellValue = location.value;
                 }
@@ -183,11 +181,14 @@ function buildView($container) {
             $boxValueInput.val(selectedCellValue || 0);
 
             $scoreDisplay.html('');
-            if (hasRobots){
-                $scoreDisplay.html('<h4>Scores</h4><ul></ul>');
-                model.forEachRobot(robot => {
-                    $scoreDisplay.find('ul').append(`<li>${robot.id}: ${robot.score}</li>`)
-                });
+            const $scoreList = $('<div><h4>Scores</h4><ul></ul></div>'); 
+            let robotCount = 0;
+            model.forEachRobot(robot => {
+                $scoreList.find('ul').append(`<li class="${robot.finished ? 'finished' : ''}">${robot.id}: ${robot.score}</li>`)
+                robotCount++;
+            }, false, false);
+            if (robotCount) {
+                $scoreDisplay.append($scoreList);
             }
         },
         setConfigs(configs) {
