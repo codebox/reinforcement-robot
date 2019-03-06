@@ -7,7 +7,7 @@ one of the ready-made grids listed down the right-hand side.
 
 [Try it out online here](https://codebox.net/pages/reinforcement-learning-grid-world)
 
-![Screenshot](https://codebox.net/graphics/robot-grid.png)
+![Screenshot](https://codebox.net/assets/images/robot-grid.png)
 
 When you click **Start** the robots will begin to move around the grid. Each robot has a score associated with it -
 a robot's objective is to increase its score as much as possible. When a robot moves to a new cell, its score is
